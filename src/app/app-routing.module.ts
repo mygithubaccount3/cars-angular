@@ -6,24 +6,24 @@ import { OwnerDetailComponent } from './owner-detail/owner-detail.component';
 const routes: Routes = [
   {
     path: '',
-    component: CarsListComponent
+    component: CarsListComponent,
   },
   {
     path: 'owner/create',
-    component: OwnerDetailComponent
+    component: OwnerDetailComponent,
   },
   {
     path: 'owner/:id',
-    component: OwnerDetailComponent
+    component: OwnerDetailComponent,
   },
   {
     path: 'owner/:id/edit',
-    component: OwnerDetailComponent
+    component: OwnerDetailComponent,
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

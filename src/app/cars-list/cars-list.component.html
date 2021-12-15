@@ -27,9 +27,30 @@
         <td>{{ owner.third_name }}</td>
         <td>{{ owner.cars.length }}</td>
         <td>
-          <button mat-stroked-button color="primary" name="view" (click)="viewOwner($event, owner.id)">View</button>
-          <button mat-stroked-button color="primary" name="edit" (click)="viewOwner($event, owner.id)">Edit</button>
-          <button mat-stroked-button color="warn" name="delete" (click)="deleteOwner(owner.id)">Delete</button>
+          <button
+            mat-stroked-button
+            color="primary"
+            name="view"
+            (click)="viewOwner($event, owner.id)"
+          >
+            View
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            name="edit"
+            (click)="viewOwner($event, owner.id)"
+          >
+            Edit
+          </button>
+          <button
+            mat-stroked-button
+            color="warn"
+            name="delete"
+            (click)="deleteOwner(owner.id)"
+          >
+            Delete
+          </button>
         </td>
       </tr>
     </tbody>

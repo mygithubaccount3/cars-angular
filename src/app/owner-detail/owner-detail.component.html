@@ -1,54 +1,4 @@
-<!-- <div *ngIf="owner" class="ownerDetail">
-  <div class="ownerDetail__item">
-    <label for="lastName">Фамилия</label>
-    <p *ngIf="!editing; else input" id="lastName">{{ owner.last_name }}</p>
-    <ng-template #input>
-      <input type="text" name="" id="" [value]="owner.last_name" />
-    </ng-template>
-  </div>
-  <div class="ownerDetail__item">
-    <label for="firstName">Имя</label>
-    <p *ngIf="!editing; else input" id="firstName">{{ owner.first_name }}</p>
-    <ng-template #input>
-      <input type="text" name="" id="" [value]="owner.first_name" />
-    </ng-template>
-  </div>
-  <div class="ownerDetail__item">
-    <label for="lastName">Отчество</label>
-    <p *ngIf="!editing; else input" id="thirdName">{{ owner.third_name }}</p>
-    <ng-template #input>
-      <input type="text" name="" id="" [value]="owner.third_name" />
-    </ng-template>
-  </div>
-  <div class="ownerDetail__item">
-      <table>
-          <thead>
-              <tr>
-                  <th colspan="5">Автомобили</th>
-              </tr>
-              <tr>
-                  <th>Номер</th>
-                  <th>Марка</th>
-                  <th>Модель</th>
-                  <th>Год</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let car of owner.cars">
-                  <td>{{car.license_plate_number}}</td>
-                  <td>{{car.manufacturer}}</td>
-                  <td>{{car.model}}</td>
-                  <td>{{car.production_year}}</td>
-                  <td>
-                      <button>Delete</button>
-                  </td>
-              </tr>
-          </tbody>
-      </table>
-  </div>
-</div> -->
 <div class="ownerDetail">
-  <!-- owner может быть не установлен, когда создается пользователь -->
   <form action="">
     <div class="ownerDetail__name">
       <div style="margin-bottom: 30px">
@@ -109,11 +59,8 @@
         <div *ngIf="this.carForm.get('cars')?.errors?.['required']">
           At least one car is required
         </div>
-        <!-- <div *ngIf="this.carForm.get('cars')?.value.controls.license_plate_number.errors?.['pattern']">Pattern not valid</div> -->
       </div>
       <table class="mat-elevation-z8" formArrayName="cars">
-        <!--- Note that these columns can be defined in any order.
-                The actual rendered columns are set as a property on the row definition" -->
         <thead>
           <tr>
             <th>ID</th>

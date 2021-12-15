@@ -33,7 +33,6 @@ export class OwnerDetailComponent implements OnInit {
     Validators.required,
   ]);
   carForm: FormGroup;
-  addCarBtn = new FormControl('Add car');
   fb;
   DELETE_ICON: string =
     '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
@@ -85,10 +84,7 @@ export class OwnerDetailComponent implements OnInit {
   }
 
   cars_fa(): FormArray {
-    const a = this.carForm.get('cars') as FormArray;
-    //console.log(a.get('0')?.disable())
-
-    return a;
+    return this.carForm.get('cars') as FormArray;
   }
 
   newCar(
@@ -101,22 +97,25 @@ export class OwnerDetailComponent implements OnInit {
   ): FormGroup {
     return this.fb.group({
       id,
-      license_plate_number: new FormControl({value: license_plate_number, disabled: this.viewing}, [
-        Validators.required,
-        Validators.pattern('[A-Z]{2}[0-9]{4}[A-Z]{2}'),
-      ]),
-      manufacturer: new FormControl({value: manufacturer, disabled: this.viewing}, [
+      license_plate_number: new FormControl(
+        { value: license_plate_number, disabled: this.viewing },
+        [Validators.required, Validators.pattern('[A-Z]{2}[0-9]{4}[A-Z]{2}')]
+      ),
+      manufacturer: new FormControl(
+        { value: manufacturer, disabled: this.viewing },
+        [Validators.required, Validators.pattern('[A-Za-z0-9]+')]
+      ),
+      model: new FormControl({ value: model, disabled: this.viewing }, [
         Validators.required,
         Validators.pattern('[A-Za-z0-9]+'),
       ]),
-      model: new FormControl({value: model, disabled: this.viewing}, [
-        Validators.required,
-        Validators.pattern('[A-Za-z0-9]+'),
-      ]),
-      production_year: new FormControl({value: production_year, disabled: this.viewing}, [
-        Validators.required,
-        Validators.pattern('(199[0-9]|20[01][0-9]|202[01])'),
-      ]),
+      production_year: new FormControl(
+        { value: production_year, disabled: this.viewing },
+        [
+          Validators.required,
+          Validators.pattern('(199[0-9]|20[01][0-9]|202[01])'),
+        ]
+      ),
 
       owner_id: new FormControl(owner_id),
     });
@@ -231,18 +230,11 @@ export class OwnerDetailComponent implements OnInit {
         this.isTableValid = false;
 
         for (let control of (this.carForm.get('cars') as FormArray).controls) {
-          console.log((control as FormArray).controls);
-          //control.markAsTouched()
-
           for (let inn of Object.values((control as FormArray).controls)) {
-            console.log(inn);
             inn.markAsTouched();
           }
         }
       }
-
-      console.log(this.carForm.get('cars'));
-      console.log(this.carForm.get('cars.0.license_plate_number')?.status);
     }
   }
 
@@ -267,9 +259,6 @@ export class OwnerDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.route.snapshot.url[1].path);
-    console.log(this.owner);
-
     if (
       this.route.snapshot.url[2] ||
       this.route.snapshot.url[1].path === 'create'
@@ -281,7 +270,6 @@ export class OwnerDetailComponent implements OnInit {
       this.firstName.disable();
       this.thirdName.disable();
       this.carForm.get('cars')?.disable();
-      //this.addCarBtn.disable();
     }
   }
 }

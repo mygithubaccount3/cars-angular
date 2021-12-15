@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { CarOwner } from './interfaces/CarOwner';
 import { ICarOwnerService } from './interfaces/CarOwnerService';
@@ -27,7 +27,7 @@ export class CarOwnerService implements ICarOwnerService {
     aMiddleName: string,
     aCars: Car[]
   ): Observable<CarOwner> {
-    const id = Math.random()
+    const id = Math.random();
 
     return this.http.post<CarOwner>('api/carOwners/', {
       id,
@@ -39,7 +39,6 @@ export class CarOwnerService implements ICarOwnerService {
   }
 
   editOwner(aOwner: CarOwner) {
-    console.log(aOwner);
     return this.http
       .put<CarOwner>('api/carOwners/' + aOwner.id, aOwner)
       .subscribe((g) => console.log(g));

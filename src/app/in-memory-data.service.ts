@@ -21,7 +21,7 @@ export class DataService implements InMemoryDbService {
               manufacturer: 'Opel',
               model: 'Astra',
               production_year: 1990,
-              owner_id: 1
+              owner_id: 1,
             },
           ],
         },
@@ -37,7 +37,7 @@ export class DataService implements InMemoryDbService {
               manufacturer: 'Opel',
               model: 'Astra',
               production_year: 1992,
-              owner_id: 2
+              owner_id: 2,
             },
           ],
         },
@@ -53,7 +53,7 @@ export class DataService implements InMemoryDbService {
               manufacturer: 'Opel',
               model: 'Astra',
               production_year: 1986,
-              owner_id: 3
+              owner_id: 3,
             },
           ],
         },
@@ -69,7 +69,7 @@ export class DataService implements InMemoryDbService {
               manufacturer: 'Opel',
               model: 'Astra',
               production_year: 1988,
-              owner_id: 4
+              owner_id: 4,
             },
           ],
         },
@@ -85,7 +85,7 @@ export class DataService implements InMemoryDbService {
               manufacturer: 'Opel',
               model: 'Astra',
               production_year: 1998,
-              owner_id: 5
+              owner_id: 5,
             },
           ],
         },
@@ -101,7 +101,7 @@ export class DataService implements InMemoryDbService {
               manufacturer: 'Opel',
               model: 'Astra',
               production_year: 1991,
-              owner_id: 6
+              owner_id: 6,
             },
           ],
         },
@@ -114,9 +114,9 @@ export class DataService implements InMemoryDbService {
           manufacturer: 'Opel',
           model: 'Astra',
           production_year: 1991,
-          owner_id: 6
+          owner_id: 6,
         },
-      ]
+      ],
     };
   }
 }

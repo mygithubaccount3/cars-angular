@@ -1,55 +1,54 @@
 .ownerDetail {
-    width: 50%;
-    margin: auto;
+  width: 50%;
+  margin: auto;
 
-    & form {
-        margin-bottom: 30px;
+  & form {
+    margin-bottom: 30px;
+  }
+
+  &__name {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__cars {
+    & table {
+      width: 100%;
+
+      & tr {
+        vertical-align: top;
+
+        & td {
+          vertical-align: middle;
+        }
+      }
     }
 
-    &__name {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+    & th {
+      text-align: left;
     }
 
-    &__cars {
-        & table {
-            width: 100%;
-
-            & tr {
-                vertical-align: top;
-
-                & td {
-                    vertical-align: middle;
-                }
-            }
-        }
-
-        & th {
-            text-align: left;
-        }
-
-        & input {
-            border: none;
-        }
-
-        & button {
-            background-color: white;
-            border: none;
-
-            &:hover {
-                background-color: lightgrey;
-                cursor: pointer;
-            }
-        }
-
+    & input {
+      border: none;
     }
+
+    & button {
+      background-color: white;
+      border: none;
+
+      &:hover {
+        background-color: lightgrey;
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 mat-icon {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }

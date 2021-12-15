@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CarOwner } from '../interfaces/CarOwner';
 import { CarOwnerService } from '../car-owner.service';
@@ -40,8 +40,7 @@ export class CarsListComponent implements OnInit {
   }
 
   deleteOwner(id: number) {
-    this.carOwnerService.deleteOwner(id).subscribe((owners) => {
-      // console.log(this.http.status)
+    this.carOwnerService.deleteOwner(id).subscribe(() => {
       this.getProducts();
     });
   }

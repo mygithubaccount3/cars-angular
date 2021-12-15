@@ -4,5 +4,5 @@ export interface Car {
   manufacturer: string;
   model: string;
   production_year: number;
-  owner_id: number
+  owner_id: number;
 }
