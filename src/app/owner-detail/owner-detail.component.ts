@@ -70,8 +70,8 @@ export class OwnerDetailComponent implements OnInit {
           this.thirdName.setValue(this.owner?.third_name);
 
           this.owner.cars.forEach((element: Car) => {
-            console.log(element.id);
             this.addCar(
+              element.id,
               element.license_plate_number,
               element.manufacturer,
               element.model,
@@ -122,16 +122,16 @@ export class OwnerDetailComponent implements OnInit {
   }
 
   addCar(
+    id: number | null,
     license_plate_number: string,
     manufacturer: string,
     model: string,
     production_year: number,
     owner_id: number | null
   ) {
-    const id = this.cars_fa().length + 1;
     this.cars_fa().push(
       this.newCar(
-        id,
+        id ?? this.cars_fa().length + 1,
         license_plate_number,
         manufacturer,
         model,
@@ -141,8 +141,9 @@ export class OwnerDetailComponent implements OnInit {
     );
   }
 
-  addNewCar() {
+  addNewCarForm() {
     this.addCar(
+      null,
       '',
       '',
       '',
@@ -181,15 +182,15 @@ export class OwnerDetailComponent implements OnInit {
           } else {
             this.uniqueCars = true;
 
-            this.ownerService.editOwner({
-              id: this.owner.id,
-              first_name: this.firstName.value,
-              last_name: this.lastName.value,
-              third_name: this.thirdName.value,
-              cars: this.carForm.value.cars,
-            });
-
-            this.router.navigate(['']);
+            this.ownerService
+              .editOwner({
+                id: this.owner.id,
+                first_name: this.firstName.value,
+                last_name: this.lastName.value,
+                third_name: this.thirdName.value,
+                cars: this.carForm.value.cars,
+              })
+              .subscribe(() => this.router.navigate(['']));
           }
         });
       } else if (this.route.snapshot.url[1].path === 'create') {
@@ -213,10 +214,10 @@ export class OwnerDetailComponent implements OnInit {
                 car.owner_id = owner.id;
               }
 
-              this.ownerService.editOwner(owner);
+              this.ownerService
+                .editOwner(owner)
+                .subscribe(() => this.router.navigate(['']));
             });
-
-            this.router.navigate(['']);
           }
         });
         //custom validator on license plate number field

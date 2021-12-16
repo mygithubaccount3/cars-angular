@@ -38,10 +38,8 @@ export class CarOwnerService implements ICarOwnerService {
     });
   }
 
-  editOwner(aOwner: CarOwner) {
-    return this.http
-      .put<CarOwner>('api/carOwners/' + aOwner.id, aOwner)
-      .subscribe((g) => console.log(g));
+  editOwner(aOwner: CarOwner): Observable<CarOwner> {
+    return this.http.put<CarOwner>('api/carOwners/' + aOwner.id, aOwner);
   }
 
   deleteOwner(aOwnerId: number): Observable<CarOwner[]> {

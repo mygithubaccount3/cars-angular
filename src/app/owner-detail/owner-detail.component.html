@@ -174,7 +174,7 @@
             </td>
             <td
               [ngStyle]="{
-                display: viewing || cars_fa().length <= 1 ? 'none' : 'block'
+                display: viewing || cars_fa().length <= 1 ? 'none' : 'table-cell'
               }"
             >
               <button type="button" (click)="removeCar(car.value.id)">
@@ -202,7 +202,7 @@
     type="button"
     mat-stroked-button
     color="primary"
-    (click)="addNewCar()"
+    (click)="addNewCarForm()"
     name="addCarBtn"
     [ngStyle]="{ display: !viewing ? 'inline-block' : 'none' }"
   >

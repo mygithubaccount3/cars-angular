@@ -28,14 +28,8 @@ export class CarsListComponent implements OnInit {
   }
 
   viewOwner($event: any, id: number) {
-    console.log($event.target, $event.target.parentNode);
     this.router.navigate([
-      '/owner/' +
-        id +
-        ($event.target.name === 'edit' ||
-        $event.target.parentNode.name === 'edit'
-          ? '/edit'
-          : ''),
+      '/owner/' + id + ($event.currentTarget.name === 'edit' ? '/edit' : ''),
     ]);
   }
 

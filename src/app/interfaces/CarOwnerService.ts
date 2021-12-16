@@ -11,6 +11,6 @@ export interface ICarOwnerService {
     aMiddleName: string,
     aCars: Car[]
   ): Observable<CarOwner>;
-  editOwner(aOwner: CarOwner): any;
+  editOwner(aOwner: CarOwner): Observable<CarOwner>;
   deleteOwner(aOwnerId: number): Observable<CarOwner[]>;
 }
