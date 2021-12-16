@@ -1,6 +1,7 @@
 .ownerDetail {
-  width: 50%;
+  width: 90%;
   margin: auto;
+  margin-top: 10px;
 
   & form {
     margin-bottom: 30px;
@@ -8,11 +9,16 @@
 
   &__name {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
+
+    & .mat-form-field {
+      width: 100%;
+    }
   }
 
   &__cars {
+    overflow-x: auto;
+
     & table {
       width: 100%;
 
@@ -51,4 +57,25 @@ mat-icon {
 
 a {
   text-decoration: none;
+}
+
+@media screen and (min-width: 768px) {
+  .ownerDetail {
+    width: 90%;
+
+    &__name {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      & mat-form-field {
+        width: 30%;
+      }
+    }
+  }
+}
+@media screen and (min-width: 1500px) {
+  .ownerDetail {
+    max-width: 1000px;
+  }
 }
