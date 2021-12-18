@@ -70,7 +70,8 @@
             <th>Production year</th>
             <th
               [ngStyle]="{
-                display: viewing || cars_fa().length <= 1 ? 'none' : 'block'
+                display:
+                  mode === 'view' || cars_fa().length <= 1 ? 'none' : 'block'
               }"
             >
               Action
@@ -102,14 +103,39 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  this.carForm.get('cars.' + i + '.license_plate_number')
-                    ?.status === 'INVALID' &&
+                  this.carForm
+                    .get('cars.' + i + '.license_plate_number')
+                    ?.hasError('pattern') &&
                   (this.carForm.get('cars.' + i + '.license_plate_number')
                     ?.dirty ||
                     this.carForm.get('cars.' + i + '.license_plate_number')
                       ?.touched)
                 "
                 >Pattern not valid</mat-error
+              >
+              <mat-error
+                *ngIf="
+                  this.carForm
+                    .get('cars.' + i + '.license_plate_number')
+                    ?.hasError('uniqueLicenseCarPlate') &&
+                  (this.carForm.get('cars.' + i + '.license_plate_number')
+                    ?.dirty ||
+                    this.carForm.get('cars.' + i + '.license_plate_number')
+                      ?.touched)
+                "
+                >Car already exists</mat-error
+              >
+              <mat-error
+                *ngIf="
+                  this.carForm
+                    .get('cars.' + i + '.license_plate_number')
+                    ?.hasError('required') &&
+                  (this.carForm.get('cars.' + i + '.license_plate_number')
+                    ?.dirty ||
+                    this.carForm.get('cars.' + i + '.license_plate_number')
+                      ?.touched)
+                "
+                >Field required</mat-error
               >
             </td>
             <td>
@@ -174,7 +200,10 @@
             </td>
             <td
               [ngStyle]="{
-                display: viewing || cars_fa().length <= 1 ? 'none' : 'table-cell'
+                display:
+                  mode === 'view' || cars_fa().length <= 1
+                    ? 'none'
+                    : 'table-cell'
               }"
             >
               <button type="button" (click)="removeCar(car.value.id)">
@@ -204,7 +233,7 @@
     color="primary"
     (click)="addNewCarForm()"
     name="addCarBtn"
-    [ngStyle]="{ display: !viewing ? 'inline-block' : 'none' }"
+    [ngStyle]="{ display: mode !== 'view' ? 'inline-block' : 'none' }"
   >
     Add car
   </button>
@@ -214,7 +243,7 @@
     color="primary"
     (click)="saveOwner()"
     name="saveOwnerBtn"
-    [ngStyle]="{ display: viewing ? 'none' : 'inline-block' }"
+    [ngStyle]="{ display: mode === 'view' ? 'none' : 'inline-block' }"
   >
     Save owner
   </button>

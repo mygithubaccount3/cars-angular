@@ -7,31 +7,23 @@ import { FormArray, FormBuilder } from '@angular/forms';
 import { CarOwnerService } from '../car-owner.service';
 import { CarOwner } from '../interfaces/CarOwner';
 import { Car } from '../interfaces/Car';
+import { uniqueLicenseCarPlateValidator } from '../validators/unique-license-car-plate.directive';
 
 @Component({
   selector: 'app-owner-detail',
   templateUrl: './owner-detail.component.html',
   styleUrls: ['./owner-detail.component.scss'],
 })
-export class OwnerDetailComponent implements OnInit {
+export class OwnerDetailComponent {
   owner?: any;
-  editing = false;
-  viewing = true;
+  owners: CarOwner[] = [];
+  mode;
   isTableValid = true;
   newCarsID: number[] = [];
   uniqueCars = true;
-  firstName = new FormControl('', [
-    Validators.pattern('[a-zA-Z]*'),
-    Validators.required,
-  ]);
-  lastName = new FormControl('', [
-    Validators.pattern('[a-zA-Z]*'),
-    Validators.required,
-  ]);
-  thirdName = new FormControl('', [
-    Validators.pattern('[a-zA-Z]*'),
-    Validators.required,
-  ]);
+  firstName;
+  lastName;
+  thirdName;
   carForm: FormGroup;
   fb;
   DELETE_ICON: string =
@@ -47,6 +39,38 @@ export class OwnerDetailComponent implements OnInit {
     sanitizer: DomSanitizer,
     fb: FormBuilder
   ) {
+    if (this.route.snapshot.url[1].path === 'create') {
+      this.mode = 'create';
+    } else if (
+      this.route.snapshot.url[2] &&
+      this.route.snapshot.url[2].path === 'edit'
+    ) {
+      this.mode = 'edit';
+    } else {
+      this.mode = 'view';
+    }
+
+    if (this.mode === 'creat' || this.mode === 'edit') {
+      this.ownerService
+        .getOwners()
+        .subscribe((owners) => (this.owners = owners));
+    }
+
+    this.firstName = new FormControl(
+      { value: '', disabled: this.mode === 'view' },
+      [Validators.pattern('[a-zA-Z]*'), Validators.required]
+    );
+
+    this.lastName = new FormControl(
+      { value: '', disabled: this.mode === 'view' },
+      [Validators.pattern('[a-zA-Z]*'), Validators.required]
+    );
+
+    this.thirdName = new FormControl(
+      { value: '', disabled: this.mode === 'view' },
+      [Validators.pattern('[a-zA-Z]*'), Validators.required]
+    );
+
     this.fb = fb;
     this.carForm = fb.group({
       cars: fb.array([], Validators.required),
@@ -60,27 +84,29 @@ export class OwnerDetailComponent implements OnInit {
       sanitizer.bypassSecurityTrustHtml(this.ARROW_BACK_ICON)
     );
 
-    this.ownerService
-      .getOwnerById(Number(this.route.snapshot.url[1].path))
-      .subscribe((owner) => {
-        if (owner) {
-          this.owner = owner;
-          this.lastName.setValue(this.owner?.last_name);
-          this.firstName.setValue(this.owner?.first_name);
-          this.thirdName.setValue(this.owner?.third_name);
+    if (this.mode === 'view' || this.mode === 'edit') {
+      this.ownerService
+        .getOwnerById(Number(this.route.snapshot.url[1].path))
+        .subscribe((owner) => {
+          if (owner) {
+            this.owner = owner;
+            this.lastName.setValue(this.owner?.last_name);
+            this.firstName.setValue(this.owner?.first_name);
+            this.thirdName.setValue(this.owner?.third_name);
 
-          this.owner.cars.forEach((element: Car) => {
-            this.addCar(
-              element.id,
-              element.license_plate_number,
-              element.manufacturer,
-              element.model,
-              element.production_year,
-              element.owner_id
-            );
-          });
-        }
-      });
+            this.owner.cars.forEach((element: Car) => {
+              this.addCar(
+                element.id,
+                element.license_plate_number,
+                element.manufacturer,
+                element.model,
+                element.production_year,
+                element.owner_id
+              );
+            });
+          }
+        });
+    }
   }
 
   cars_fa(): FormArray {
@@ -98,19 +124,27 @@ export class OwnerDetailComponent implements OnInit {
     return this.fb.group({
       id,
       license_plate_number: new FormControl(
-        { value: license_plate_number, disabled: this.viewing },
-        [Validators.required, Validators.pattern('[A-Z]{2}[0-9]{4}[A-Z]{2}')]
+        { value: license_plate_number, disabled: this.mode === 'view' },
+        [
+          Validators.required,
+          Validators.pattern('[A-Z]{2}[0-9]{4}[A-Z]{2}'),
+          uniqueLicenseCarPlateValidator(
+            this.owner.id,
+            this.owners,
+            this.carForm
+          ),
+        ]
       ),
       manufacturer: new FormControl(
-        { value: manufacturer, disabled: this.viewing },
+        { value: manufacturer, disabled: this.mode === 'view' },
         [Validators.required, Validators.pattern('[A-Za-z0-9]+')]
       ),
-      model: new FormControl({ value: model, disabled: this.viewing }, [
+      model: new FormControl({ value: model, disabled: this.mode === 'view' }, [
         Validators.required,
         Validators.pattern('[A-Za-z0-9]+'),
       ]),
       production_year: new FormControl(
-        { value: production_year, disabled: this.viewing },
+        { value: production_year, disabled: this.mode === 'view' },
         [
           Validators.required,
           Validators.pattern('(199[0-9]|20[01][0-9]|202[01])'),
@@ -173,54 +207,49 @@ export class OwnerDetailComponent implements OnInit {
       !this.thirdName.errors &&
       this.carForm.get('cars')?.valid
     ) {
-      if (this.route.snapshot.url[2]) {
-        this.ownerService.getOwners().subscribe((owners) => {
-          const isDuplicate = this.checkForCarDuplicates(owners);
+      if (this.mode === 'edit') {
+        const isDuplicate = this.checkForCarDuplicates(this.owners);
 
-          if (isDuplicate) {
-            this.uniqueCars = false;
-          } else {
-            this.uniqueCars = true;
+        if (isDuplicate) {
+          this.uniqueCars = false;
+        } else {
+          this.uniqueCars = true;
+
+          this.ownerService
+            .editOwner({
+              id: this.owner.id,
+              first_name: this.firstName.value,
+              last_name: this.lastName.value,
+              third_name: this.thirdName.value,
+              cars: this.carForm.value.cars,
+            })
+            .subscribe(() => this.router.navigate(['']));
+        }
+      } else if (this.mode === 'create') {
+        const isDuplicate = this.checkForCarDuplicates(this.owners);
+
+        if (isDuplicate) {
+          this.uniqueCars = false;
+        } else {
+          this.uniqueCars = true;
+
+          const newOwner = this.ownerService.createOwner(
+            this.lastName.value,
+            this.firstName.value,
+            this.thirdName.value,
+            this.carForm.value.cars
+          );
+
+          newOwner.subscribe((owner) => {
+            for (let car of owner.cars) {
+              car.owner_id = owner.id;
+            }
 
             this.ownerService
-              .editOwner({
-                id: this.owner.id,
-                first_name: this.firstName.value,
-                last_name: this.lastName.value,
-                third_name: this.thirdName.value,
-                cars: this.carForm.value.cars,
-              })
+              .editOwner(owner)
               .subscribe(() => this.router.navigate(['']));
-          }
-        });
-      } else if (this.route.snapshot.url[1].path === 'create') {
-        this.ownerService.getOwners().subscribe((owners) => {
-          const isDuplicate = this.checkForCarDuplicates(owners);
-
-          if (isDuplicate) {
-            this.uniqueCars = false;
-          } else {
-            this.uniqueCars = true;
-
-            const newOwner = this.ownerService.createOwner(
-              this.lastName.value,
-              this.firstName.value,
-              this.thirdName.value,
-              this.carForm.value.cars
-            );
-
-            newOwner.subscribe((owner) => {
-              for (let car of owner.cars) {
-                car.owner_id = owner.id;
-              }
-
-              this.ownerService
-                .editOwner(owner)
-                .subscribe(() => this.router.navigate(['']));
-            });
-          }
-        });
-        //custom validator on license plate number field
+          });
+        }
       }
     } else {
       this.firstName.errors && this.firstName.markAsTouched();
@@ -257,20 +286,5 @@ export class OwnerDetailComponent implements OnInit {
     }
 
     return duplicatedCars.length > 0;
-  }
-
-  ngOnInit(): void {
-    if (
-      this.route.snapshot.url[2] ||
-      this.route.snapshot.url[1].path === 'create'
-    ) {
-      this.editing = true;
-      this.viewing = false;
-    } else {
-      this.lastName.disable();
-      this.firstName.disable();
-      this.thirdName.disable();
-      this.carForm.get('cars')?.disable();
-    }
   }
 }
