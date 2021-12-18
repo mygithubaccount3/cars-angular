@@ -19,8 +19,6 @@ export class OwnerDetailComponent {
   owners: CarOwner[] = [];
   mode;
   isTableValid = true;
-  newCarsID: number[] = [];
-  uniqueCars = true;
   firstName;
   lastName;
   thirdName;
@@ -30,6 +28,10 @@ export class OwnerDetailComponent {
     '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
   ARROW_BACK_ICON: string =
     '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>';
+
+  get cars(): FormArray {
+    return this.carForm.get('cars') as FormArray;
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -109,10 +111,6 @@ export class OwnerDetailComponent {
     }
   }
 
-  cars_fa(): FormArray {
-    return this.carForm.get('cars') as FormArray;
-  }
-
   newCar(
     id: number,
     license_plate_number: string,
@@ -163,9 +161,9 @@ export class OwnerDetailComponent {
     production_year: number,
     owner_id: number | null
   ) {
-    this.cars_fa().push(
+    this.cars.push(
       this.newCar(
-        id ?? this.cars_fa().length + 1,
+        id ?? this.cars.length + 1,
         license_plate_number,
         manufacturer,
         model,
@@ -184,107 +182,62 @@ export class OwnerDetailComponent {
       new Date().getFullYear(),
       this.owner ? this.owner.id : null
     );
-
-    this.newCarsID.push(
-      this.cars_fa().value[this.cars_fa().value.length - 1].id
-    );
   }
 
   removeCar(id: number) {
-    const pos = this.cars_fa().value.findIndex((car: Car) => car.id === id);
-    this.cars_fa().removeAt(pos);
-    this.newCarsID = this.newCarsID.filter((val) => {
-      return val !== id;
-    });
+    const pos = this.cars.value.findIndex((car: Car) => car.id === id);
+    this.cars.removeAt(pos);
   }
 
   saveOwner() {
-    this.uniqueCars = true;
-
     if (
       !this.firstName.errors &&
       !this.lastName.errors &&
       !this.thirdName.errors &&
-      this.carForm.get('cars')?.valid
+      this.cars?.valid
     ) {
       if (this.mode === 'edit') {
-        const isDuplicate = this.checkForCarDuplicates(this.owners);
+        this.ownerService
+          .editOwner({
+            id: this.owner.id,
+            first_name: this.firstName.value,
+            last_name: this.lastName.value,
+            third_name: this.thirdName.value,
+            cars: this.carForm.value.cars,
+          })
+          .subscribe(() => this.router.navigate(['']));
+      } else if (this.mode === 'create') {
+        const newOwner = this.ownerService.createOwner(
+          this.lastName.value,
+          this.firstName.value,
+          this.thirdName.value,
+          this.carForm.value.cars
+        );
 
-        if (isDuplicate) {
-          this.uniqueCars = false;
-        } else {
-          this.uniqueCars = true;
+        newOwner.subscribe((owner) => {
+          for (let car of owner.cars) {
+            car.owner_id = owner.id;
+          }
 
           this.ownerService
-            .editOwner({
-              id: this.owner.id,
-              first_name: this.firstName.value,
-              last_name: this.lastName.value,
-              third_name: this.thirdName.value,
-              cars: this.carForm.value.cars,
-            })
+            .editOwner(owner)
             .subscribe(() => this.router.navigate(['']));
-        }
-      } else if (this.mode === 'create') {
-        const isDuplicate = this.checkForCarDuplicates(this.owners);
-
-        if (isDuplicate) {
-          this.uniqueCars = false;
-        } else {
-          this.uniqueCars = true;
-
-          const newOwner = this.ownerService.createOwner(
-            this.lastName.value,
-            this.firstName.value,
-            this.thirdName.value,
-            this.carForm.value.cars
-          );
-
-          newOwner.subscribe((owner) => {
-            for (let car of owner.cars) {
-              car.owner_id = owner.id;
-            }
-
-            this.ownerService
-              .editOwner(owner)
-              .subscribe(() => this.router.navigate(['']));
-          });
-        }
+        });
       }
     } else {
       this.firstName.errors && this.firstName.markAsTouched();
       this.lastName.errors && this.lastName.markAsTouched();
       this.thirdName.errors && this.thirdName.markAsTouched();
 
-      if (this.carForm.get('cars')?.invalid) {
+      if (this.cars?.invalid) {
         this.isTableValid = false;
 
-        for (let control of (this.carForm.get('cars') as FormArray).controls) {
+        for (let control of this.cars?.controls) {
           for (let inn of Object.values((control as FormArray).controls)) {
             inn.markAsTouched();
           }
         }
       }
     }
-  }
-
-  checkForCarDuplicates(owners: CarOwner[]): boolean {
-    let duplicatedCars: Car[] = [];
-
-    for (let newCarID of this.newCarsID) {
-      owners.forEach((owner) => {
-        duplicatedCars.push(
-          ...owner.cars.filter((car) => {
-            return (
-              car.license_plate_number ===
-              this.carForm.get('cars.' + (newCarID - 1))?.value
-                .license_plate_number
-            );
-          })
-        );
-      });
-    }
-
-    return duplicatedCars.length > 0;
   }
 }

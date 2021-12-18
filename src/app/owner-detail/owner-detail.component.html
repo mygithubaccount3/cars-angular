@@ -52,11 +52,8 @@
       </div>
     </div>
     <div class="ownerDetail__cars" [formGroup]="carForm">
-      <div *ngIf="!uniqueCars" style="color: #f44336">
-        There is a car with such a license plate number
-      </div>
       <div *ngIf="!isTableValid" style="color: #f44336">
-        <div *ngIf="this.carForm.get('cars')?.errors?.['required']">
+        <div *ngIf="cars?.errors?.['required']">
           At least one car is required
         </div>
       </div>
@@ -71,7 +68,7 @@
             <th
               [ngStyle]="{
                 display:
-                  mode === 'view' || cars_fa().length <= 1 ? 'none' : 'block'
+                  mode === 'view' || cars.length <= 1 ? 'none' : 'block'
               }"
             >
               Action
@@ -80,7 +77,7 @@
         </thead>
         <tbody>
           <tr
-            *ngFor="let car of cars_fa().controls; let i = index"
+            *ngFor="let car of cars.controls; let i = index"
             [formGroupName]="i"
           >
             <td>
@@ -201,7 +198,7 @@
             <td
               [ngStyle]="{
                 display:
-                  mode === 'view' || cars_fa().length <= 1
+                  mode === 'view' || cars.length <= 1
                     ? 'none'
                     : 'table-cell'
               }"
