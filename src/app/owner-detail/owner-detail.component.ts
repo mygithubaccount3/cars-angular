@@ -52,7 +52,7 @@ export class OwnerDetailComponent {
       this.mode = 'view';
     }
 
-    if (this.mode === 'creat' || this.mode === 'edit') {
+    if (this.mode === 'create' || this.mode === 'edit') {
       this.ownerService
         .getOwners()
         .subscribe((owners) => (this.owners = owners));
@@ -127,7 +127,7 @@ export class OwnerDetailComponent {
           Validators.required,
           Validators.pattern('[A-Z]{2}[0-9]{4}[A-Z]{2}'),
           uniqueLicenseCarPlateValidator(
-            this.owner.id,
+            this.owner ? this.owner.id : null,
             this.owners,
             this.carForm
           ),
