@@ -16,20 +16,21 @@ export function uniqueLicenseCarPlateValidator(
   return (control: AbstractControl): ValidationErrors | null => {
     let isLicenseCarPlatesUnique = true;
 
-    let i = 0;
+    let d = 0;
 
-    (carForm.get('cars') as FormArray).controls.find((car) => {
-      if (car.value.license_plate_number === control.value) {
-        i++;
+    for (let i = 0; i < (carForm.get('cars') as FormArray).length; i++) {
+      if (
+        carForm.get('cars.' + i + '.license_plate_number')?.value ===
+        control.value
+      ) {
+        d++;
 
-        if (i === 2) {
+        if (d === 2) {
           isLicenseCarPlatesUnique = false;
-          return true;
+          break;
         }
       }
-
-      return false;
-    });
+    }
 
     if (isLicenseCarPlatesUnique) {
       const allOwnersExceptCurrent = owners.filter((owner: CarOwner) => {
