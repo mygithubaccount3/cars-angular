@@ -1,247 +1,264 @@
 <div class="ownerDetail">
   <form action="">
     <div class="ownerDetail__name">
-      <div style="margin-bottom: 30px">
-        <mat-form-field appearance="outline">
-          <mat-label>Last name</mat-label>
-          <input matInput [formControl]="lastName" placeholder="Last Name" />
-        </mat-form-field>
-        <div
-          *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
-          style="color: #f44336"
-        >
-          <div *ngIf="lastName.errors?.['required']">Last name is required</div>
-          <div *ngIf="lastName.errors?.['pattern']">
-            Last name can contain only letters
+      <h2>Owner Information</h2>
+      <div>
+        <div style="margin-bottom: 30px">
+          <mat-form-field appearance="outline">
+            <mat-label>Last name</mat-label>
+            <input matInput [formControl]="lastName" placeholder="Last Name" />
+          </mat-form-field>
+          <div
+            *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
+            style="color: #f44336"
+          >
+            <div *ngIf="lastName.errors?.['required']">
+              Last name is required
+            </div>
+            <div *ngIf="lastName.errors?.['pattern']">
+              Last name can contain only letters
+            </div>
           </div>
         </div>
-      </div>
-      <div style="margin-bottom: 30px">
-        <mat-form-field appearance="outline">
-          <mat-label>First name</mat-label>
-          <input matInput [formControl]="firstName" placeholder="First Name" />
-        </mat-form-field>
-        <div
-          *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)"
-          style="color: #f44336"
-        >
-          <div *ngIf="firstName.errors?.['required']">
-            First name is required
-          </div>
-          <div *ngIf="firstName.errors?.['pattern']">
-            First name can contain only letters
+        <div style="margin-bottom: 30px">
+          <mat-form-field appearance="outline">
+            <mat-label>First name</mat-label>
+            <input
+              matInput
+              [formControl]="firstName"
+              placeholder="First Name"
+            />
+          </mat-form-field>
+          <div
+            *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)"
+            style="color: #f44336"
+          >
+            <div *ngIf="firstName.errors?.['required']">
+              First name is required
+            </div>
+            <div *ngIf="firstName.errors?.['pattern']">
+              First name can contain only letters
+            </div>
           </div>
         </div>
-      </div>
-      <div style="margin-bottom: 30px">
-        <mat-form-field appearance="outline">
-          <mat-label>Third Name</mat-label>
-          <input matInput [formControl]="thirdName" placeholder="Third Name" />
-        </mat-form-field>
-        <div
-          *ngIf="thirdName.invalid && (thirdName.dirty || thirdName.touched)"
-          style="color: #f44336"
-        >
-          <div *ngIf="thirdName.errors?.['required']">
-            Third name is required
-          </div>
-          <div *ngIf="thirdName.errors?.['pattern']">
-            Third name can contain only letters
+        <div style="margin-bottom: 30px">
+          <mat-form-field appearance="outline">
+            <mat-label>Third Name</mat-label>
+            <input
+              matInput
+              [formControl]="thirdName"
+              placeholder="Third Name"
+            />
+          </mat-form-field>
+          <div
+            *ngIf="thirdName.invalid && (thirdName.dirty || thirdName.touched)"
+            style="color: #f44336"
+          >
+            <div *ngIf="thirdName.errors?.['required']">
+              Third name is required
+            </div>
+            <div *ngIf="thirdName.errors?.['pattern']">
+              Third name can contain only letters
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="ownerDetail__cars" [formGroup]="carForm">
+      <div class="ownerDetail__tableHeader">
+        <h2>Add Car Information</h2>
+        <button
+          class="ownerDetail__addCarBtn"
+          type="button"
+          mat-stroked-button
+          color="primary"
+          (click)="addNewCarForm()"
+          name="addCarBtn"
+          [ngStyle]="{ display: mode !== 'view' ? 'inline-block' : 'none' }"
+        >
+          <mat-icon
+            svgIcon="add_circle"
+            aria-hidden="false"
+            aria-label="Add circle SVG icon"
+          ></mat-icon>
+        </button>
+      </div>
       <div *ngIf="!isTableValid" style="color: #f44336">
         <div *ngIf="cars?.errors?.['required']">
           At least one car is required
         </div>
       </div>
-      <table class="mat-elevation-z8" formArrayName="cars">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>License plate number</th>
-            <th>Manufacturer</th>
-            <th>Model</th>
-            <th>Production year</th>
-            <th
-              [ngStyle]="{
-                display:
-                  mode === 'view' || cars.length <= 1 ? 'none' : 'block'
-              }"
+      <div
+        *ngIf="cars.length > 0; else nocars"
+        class="ownerDetail__carsTableWrapper"
+      >
+        <table class="mat-elevation-z8" formArrayName="cars">
+          <thead>
+            <tr>
+              <th>License plate number</th>
+              <th>Manufacturer</th>
+              <th>Model</th>
+              <th>Production year</th>
+              <th
+                *ngIf="mode !== 'view' && cars.length > 1"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let car of cars.controls; let i = index"
+              [formGroupName]="i"
             >
-              Action
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let car of cars.controls; let i = index"
-            [formGroupName]="i"
-          >
-            <td>
-              <input
-                type="text"
-                formControlName="id"
-                class="form-control"
-                [attr.disabled]="''"
-              />
-            </td>
-            <td>
-              <mat-form-field appearance="outline">
-                <input
-                  type="text"
-                  matInput
-                  formControlName="license_plate_number"
-                  class="form-control"
-                  placeholder="License plate number"
-                />
-              </mat-form-field>
-              <mat-error
-                *ngIf="
-                  this.carForm
-                    .get('cars.' + i + '.license_plate_number')
-                    ?.hasError('pattern') &&
-                  (this.carForm.get('cars.' + i + '.license_plate_number')
-                    ?.dirty ||
-                    this.carForm.get('cars.' + i + '.license_plate_number')
-                      ?.touched)
-                "
-                >Pattern not valid</mat-error
+              <td>
+                <mat-form-field appearance="outline">
+                  <input
+                    type="text"
+                    matInput
+                    formControlName="license_plate_number"
+                    class="form-control"
+                    placeholder="License plate number"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    this.carForm
+                      .get('cars.' + i + '.license_plate_number')
+                      ?.hasError('pattern') &&
+                    (this.carForm.get('cars.' + i + '.license_plate_number')
+                      ?.dirty ||
+                      this.carForm.get('cars.' + i + '.license_plate_number')
+                        ?.touched)
+                  "
+                  >Pattern not valid</mat-error
+                >
+                <mat-error
+                  *ngIf="
+                    this.carForm
+                      .get('cars.' + i + '.license_plate_number')
+                      ?.hasError('uniqueLicenseCarPlate') &&
+                    (this.carForm.get('cars.' + i + '.license_plate_number')
+                      ?.dirty ||
+                      this.carForm.get('cars.' + i + '.license_plate_number')
+                        ?.touched)
+                  "
+                  >Car already exists</mat-error
+                >
+                <mat-error
+                  *ngIf="
+                    this.carForm
+                      .get('cars.' + i + '.license_plate_number')
+                      ?.hasError('required') &&
+                    (this.carForm.get('cars.' + i + '.license_plate_number')
+                      ?.dirty ||
+                      this.carForm.get('cars.' + i + '.license_plate_number')
+                        ?.touched)
+                  "
+                  >Field required</mat-error
+                >
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <input
+                    type="text"
+                    matInput
+                    formControlName="manufacturer"
+                    class="form-control"
+                    placeholder="Manufacturer"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    this.carForm.get('cars.' + i + '.manufacturer')?.status ===
+                      'INVALID' &&
+                    (this.carForm.get('cars.' + i + '.manufacturer')?.dirty ||
+                      this.carForm.get('cars.' + i + '.manufacturer')?.touched)
+                  "
+                  >Manufacturer not valid</mat-error
+                >
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <input
+                    type="text"
+                    matInput
+                    formControlName="model"
+                    class="form-control"
+                    placeholder="Model"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    this.carForm.get('cars.' + i + '.model')?.status ===
+                      'INVALID' &&
+                    (this.carForm.get('cars.' + i + '.model')?.dirty ||
+                      this.carForm.get('cars.' + i + '.model')?.touched)
+                  "
+                  >Model not valid</mat-error
+                >
+              </td>
+              <td>
+                <mat-form-field appearance="outline">
+                  <input
+                    type="text"
+                    matInput
+                    formControlName="production_year"
+                    class="form-control"
+                    placeholder="Production year"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    this.carForm.get('cars.' + i + '.production_year')
+                      ?.status === 'INVALID' &&
+                    (this.carForm.get('cars.' + i + '.production_year')
+                      ?.dirty ||
+                      this.carForm.get('cars.' + i + '.production_year')
+                        ?.touched)
+                  "
+                  >Production year not valid</mat-error
+                >
+              </td>
+              <td
+                [ngStyle]="{
+                  display:
+                    mode === 'view' || cars.length <= 1 ? 'none' : 'table-cell'
+                }"
               >
-              <mat-error
-                *ngIf="
-                  this.carForm
-                    .get('cars.' + i + '.license_plate_number')
-                    ?.hasError('uniqueLicenseCarPlate') &&
-                  (this.carForm.get('cars.' + i + '.license_plate_number')
-                    ?.dirty ||
-                    this.carForm.get('cars.' + i + '.license_plate_number')
-                      ?.touched)
-                "
-                >Car already exists</mat-error
-              >
-              <mat-error
-                *ngIf="
-                  this.carForm
-                    .get('cars.' + i + '.license_plate_number')
-                    ?.hasError('required') &&
-                  (this.carForm.get('cars.' + i + '.license_plate_number')
-                    ?.dirty ||
-                    this.carForm.get('cars.' + i + '.license_plate_number')
-                      ?.touched)
-                "
-                >Field required</mat-error
-              >
-            </td>
-            <td>
-              <mat-form-field appearance="outline">
-                <input
-                  type="text"
-                  matInput
-                  formControlName="manufacturer"
-                  class="form-control"
-                  placeholder="Manufacturer"
-                />
-              </mat-form-field>
-              <mat-error
-                *ngIf="
-                  this.carForm.get('cars.' + i + '.manufacturer')?.status ===
-                    'INVALID' &&
-                  (this.carForm.get('cars.' + i + '.manufacturer')?.dirty ||
-                    this.carForm.get('cars.' + i + '.manufacturer')?.touched)
-                "
-                >Manufacturer not valid</mat-error
-              >
-            </td>
-            <td>
-              <mat-form-field appearance="outline">
-                <input
-                  type="text"
-                  matInput
-                  formControlName="model"
-                  class="form-control"
-                  placeholder="Model"
-                />
-              </mat-form-field>
-              <mat-error
-                *ngIf="
-                  this.carForm.get('cars.' + i + '.model')?.status ===
-                    'INVALID' &&
-                  (this.carForm.get('cars.' + i + '.model')?.dirty ||
-                    this.carForm.get('cars.' + i + '.model')?.touched)
-                "
-                >Model not valid</mat-error
-              >
-            </td>
-            <td>
-              <mat-form-field appearance="outline">
-                <input
-                  type="text"
-                  matInput
-                  formControlName="production_year"
-                  class="form-control"
-                  placeholder="Production year"
-                />
-              </mat-form-field>
-              <mat-error
-                *ngIf="
-                  this.carForm.get('cars.' + i + '.production_year')?.status ===
-                    'INVALID' &&
-                  (this.carForm.get('cars.' + i + '.production_year')?.dirty ||
-                    this.carForm.get('cars.' + i + '.production_year')?.touched)
-                "
-                >Production year not valid</mat-error
-              >
-            </td>
-            <td
-              [ngStyle]="{
-                display:
-                  mode === 'view' || cars.length <= 1
-                    ? 'none'
-                    : 'table-cell'
-              }"
-            >
-              <button type="button" (click)="removeCar(car.value.id)">
-                <mat-icon
-                  svgIcon="delete"
-                  aria-hidden="false"
-                  aria-label="Delete SVG icon"
-                ></mat-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <button type="button" (click)="removeCar(car.value.id)">
+                  <mat-icon
+                    svgIcon="delete"
+                    aria-hidden="false"
+                    aria-label="Delete SVG icon"
+                  ></mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #nocars>This owner haven't had cars yet</ng-template>
     </div>
   </form>
-  <a routerLink="/">
-    <mat-icon
-      svgIcon="arrow_back"
-      aria-hidden="false"
-      aria-label="Arrow back SVG icon"
-    ></mat-icon
-    >Back to main page
-  </a>
-  <button
-    type="button"
-    mat-stroked-button
-    color="primary"
-    (click)="addNewCarForm()"
-    name="addCarBtn"
-    [ngStyle]="{ display: mode !== 'view' ? 'inline-block' : 'none' }"
-  >
-    Add car
-  </button>
-  <button
-    type="button"
-    mat-stroked-button
-    color="primary"
-    (click)="saveOwner()"
-    name="saveOwnerBtn"
-    [ngStyle]="{ display: mode === 'view' ? 'none' : 'inline-block' }"
-  >
-    Save owner
-  </button>
+  <div class="ownerDetail__btns">
+    <a routerLink="/">
+      <mat-icon
+        svgIcon="arrow_back"
+        aria-hidden="false"
+        aria-label="Arrow back SVG icon"
+      ></mat-icon
+      >Back to main page
+    </a>
+    <button
+      type="button"
+      mat-stroked-button
+      color="primary"
+      (click)="saveOwner()"
+      name="saveOwnerBtn"
+      [ngStyle]="{ display: mode === 'view' ? 'none' : 'inline-block' }"
+    >
+      Save owner
+    </button>
+  </div>
 </div>
